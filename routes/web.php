@@ -16,4 +16,7 @@ Route::view('profile', 'profile')
 Route::get('/meals/add', function () {
     return view('meals.add');
 })->middleware(['auth'])->name('meals.add');
+Route::get('/progress', function () {
+    return view('progress.index');
+})->middleware(['auth'])->name('progress');
 require __DIR__.'/auth.php';

@@ -3,13 +3,31 @@
     use Illuminate\Support\Facades\Auth;
 
     $profile = Auth::user()->profile;
-    $meals = Auth::user()->meals()
+$meals = Auth::user()->meals()
     ->with('items.food')
     ->whereDate('meal_date', today())
     ->get()
     ->groupBy('meal_type');
-    $nutrition = null;
 
+$consumedCalories = 0;
+$consumedProtein = 0;
+$consumedCarbs = 0;
+$consumedFat = 0;
+
+foreach ($meals as $mealGroup) {
+    foreach ($mealGroup as $meal) {
+        foreach ($meal->items as $item) {
+
+            $consumedCalories += $item->food->calories * $item->quantity;
+            $consumedProtein += $item->food->protein * $item->quantity;
+            $consumedCarbs += $item->food->carbs * $item->quantity;
+            $consumedFat += $item->food->fat * $item->quantity;
+
+        }
+    }
+}
+
+$nutrition = null;
     if ($profile) {
         $calculator = app(NutritionCalculator::class);
         $nutrition = $calculator->calculate($profile);
@@ -240,7 +258,9 @@
                             </p>
 
                             <p class="mt-2 text-3xl font-bold text-white">
-                                0
+                                <p class="mt-2 text-3xl font-bold text-white">
+                                {{ round($consumedCalories) }}
+                            </p>
                             </p>
 
                             <p class="mt-1 text-sm text-gray-400">
@@ -275,7 +295,9 @@
                             </p>
 
                             <p class="mt-2 text-3xl font-bold text-white">
-                                0g
+                                <p class="mt-2 text-3xl font-bold text-white">
+                                    {{ round($consumedProtein,1) }}g
+                                </p>
                             </p>
 
                             <p class="mt-1 text-sm text-gray-400">
@@ -310,7 +332,9 @@
                             </p>
 
                             <p class="mt-2 text-3xl font-bold text-white">
-                                0g
+                                <p class="mt-2 text-3xl font-bold text-white">
+                                {{ round($consumedCarbs, 1) }}g
+                            </p>
                             </p>
 
                             <p class="mt-1 text-sm text-gray-400">
@@ -345,7 +369,9 @@
                             </p>
 
                             <p class="mt-2 text-3xl font-bold text-white">
-                                0g
+                                <p class="mt-2 text-3xl font-bold text-white">
+                                {{ round($consumedFat, 1) }}g
+                            </p>
                             </p>
 
                             <p class="mt-1 text-sm text-gray-400">
