@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Profile as ProfileModel;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
@@ -21,6 +21,10 @@ class User extends Authenticatable
     public function profile(): HasOne
 {
     return $this->hasOne(ProfileModel::class);
+}
+public function meals(): HasMany
+{
+    return $this->hasMany(Meal::class);
 }
     /**
      * Get the attributes that should be cast.
